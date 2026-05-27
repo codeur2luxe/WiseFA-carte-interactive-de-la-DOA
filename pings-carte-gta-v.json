@@ -1,0 +1,191 @@
+[
+  {
+    "id": "7cb9afa2-f4f1-4b6e-99de-ca138145bebd",
+    "name": "Labo Weed 1",
+    "description": "Fabrication de drogue",
+    "color": "#00aa00",
+    "lat": 2798.25,
+    "lng": 2819.25,
+    "createdAt": "2026-05-26T13:40:05.408Z"
+  },
+  {
+    "id": "f58522d5-5b1c-4fa0-bb15-f1a6799b387b",
+    "name": "Kevlar moyen",
+    "description": "Fabrication d'arme",
+    "color": "#ff3333",
+    "lat": 886.25,
+    "lng": 1770.5,
+    "createdAt": "2026-05-26T13:41:44.146Z"
+  },
+  {
+    "id": "15f474ff-760a-458b-9e34-410451098b80",
+    "name": "Labo Weed 2",
+    "description": "Fabrication de drogue",
+    "color": "#00aa00",
+    "lat": 775.5,
+    "lng": 1931.75,
+    "createdAt": "2026-05-26T13:46:18.341Z"
+  },
+  {
+    "id": "2cb09e93-23c4-4aa4-bd1f-5c851af05564",
+    "name": "Labo Cocaïne",
+    "description": "Fabrication de drogue",
+    "color": "#ffffff",
+    "lat": 1186.5,
+    "lng": 2067.25,
+    "createdAt": "2026-05-26T14:02:47.548Z"
+  },
+  {
+    "id": "1da757c4-b288-4a8a-8f44-05728c8ebf5f",
+    "name": "Récolte fertilisant",
+    "description": "Matière première drogue",
+    "color": "#00aa00",
+    "lat": 2543.5,
+    "lng": 2829,
+    "createdAt": "2026-05-26T14:05:19.962Z"
+  },
+  {
+    "id": "24ada167-8f68-4051-828e-a8d34096c506",
+    "name": "Récolte ciment",
+    "description": "Matière première drogue",
+    "color": "#ffffff",
+    "lat": 1028.25,
+    "lng": 1729.25,
+    "createdAt": "2026-05-26T14:09:34.484Z"
+  },
+  {
+    "id": "23fd15c7-5cc1-4246-a839-8cb1d27342dd",
+    "name": "Acier galvanisé",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 3421,
+    "lng": 2342.5,
+    "createdAt": "2026-05-26T14:11:38.819Z"
+  },
+  {
+    "id": "81e9ce67-4906-412a-8119-4065b34e0248",
+    "name": "Pièce metallique",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2371,
+    "lng": 2671.5,
+    "createdAt": "2026-05-26T14:13:45.252Z"
+  },
+  {
+    "id": "1357a53f-2cc8-4111-93ad-c129c8ec7b4a",
+    "name": "Transformation Canon",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2414,
+    "lng": 2435.25,
+    "createdAt": "2026-05-26T14:14:20.512Z"
+  },
+  {
+    "id": "c4b63eb5-23a3-4e23-ba27-6b330709bbd3",
+    "name": "Acier",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2250.625,
+    "lng": 1934.625,
+    "createdAt": "2026-05-26T14:14:58.779Z"
+  },
+  {
+    "id": "ea6c7d12-46ce-43b1-93f2-ebb1326bf0c7",
+    "name": "Ressort",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2718,
+    "lng": 2703,
+    "createdAt": "2026-05-26T14:15:45.457Z"
+  },
+  {
+    "id": "5505b196-1b17-4aaa-88ed-9863396716f6",
+    "name": "Transformation gachette",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2958.25,
+    "lng": 1499.25,
+    "createdAt": "2026-05-26T14:17:11.767Z"
+  },
+  {
+    "id": "a39e2151-302b-42c3-866e-6d82872da2d8",
+    "name": "Bois et extracteur",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 1675.125,
+    "lng": 836.625,
+    "createdAt": "2026-05-26T14:17:51.033Z"
+  },
+  {
+    "id": "44216031-c933-449b-b94f-4409e7389c54",
+    "name": "Mécanisme double gachette",
+    "description": "Utile pour créer des armes",
+    "color": "#808080",
+    "lat": 2043.125,
+    "lng": 2152.25,
+    "createdAt": "2026-05-26T14:18:31.407Z"
+  },
+  {
+    "id": "7bdc2f18-1999-45b7-bece-b4fa1011d5b4",
+    "name": "Feuille de coca",
+    "description": "Matière première drogue",
+    "color": "#ffffff",
+    "lat": 2807,
+    "lng": 2393,
+    "createdAt": "2026-05-26T14:21:15.239Z"
+  },
+  {
+    "id": "9a3f6f3e-2981-4ee1-ad2f-991d5912f738",
+    "name": "Kérosène",
+    "description": "Matière première drogue",
+    "color": "#ffffff",
+    "lat": 2278.5,
+    "lng": 1976.25,
+    "createdAt": "2026-05-26T14:22:02.401Z"
+  },
+  {
+    "id": "a4776903-0de6-41de-84e8-02deeb16ed2d",
+    "name": "Acétone",
+    "description": "Matière première drogue",
+    "color": "#87ceeb",
+    "lat": 558,
+    "lng": 2370,
+    "createdAt": "2026-05-26T14:23:26.911Z"
+  },
+  {
+    "id": "94bc3a0a-ae06-431e-8465-77ed04658a04",
+    "name": "Éthanol",
+    "description": "Matière première drogue",
+    "color": "#87ceeb",
+    "lat": 889,
+    "lng": 2043,
+    "createdAt": "2026-05-26T14:24:10.697Z"
+  },
+  {
+    "id": "75123249-0287-4054-b256-9238b7f77eb0",
+    "name": "Ammoniaque",
+    "description": "Matière première drogue",
+    "color": "#87ceeb",
+    "lat": 2536.25,
+    "lng": 3009.5,
+    "createdAt": "2026-05-26T14:24:52.063Z"
+  },
+  {
+    "id": "267d1f04-7d07-4f44-bfef-9b31e761c76d",
+    "name": "Pseudophédrine",
+    "description": "Matière première drogue",
+    "color": "#87ceeb",
+    "lat": 2282.875,
+    "lng": 1862.75,
+    "createdAt": "2026-05-26T14:26:02.341Z"
+  },
+  {
+    "id": "3e4a28f5-9a5e-4e4e-91b6-d0f12fade9c9",
+    "name": "Lithium",
+    "description": "Matière première drogue",
+    "color": "#87ceeb",
+    "lat": 755.25,
+    "lng": 1715.25,
+    "createdAt": "2026-05-26T14:26:50.563Z"
+  }
+]

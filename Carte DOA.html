@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carte interactive GTA V - Pings perso</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    .leaflet-image-layer {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+    :root {
+      --bg: #101318;
+      --panel: #171b22;
+      --panel-2: #202633;
+      --text: #f3f5f8;
+      --muted: #9aa4b2;
+      --accent: #41d17d;
+      --danger: #ff5d5d;
+      --border: #303846;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      height: 100vh;
+    }
+
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+
+    .hint {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .section {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #0f131a;
+      color: var(--text);
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    button {
+      cursor: pointer;
+      background: #263142;
+      font-weight: 700;
+      transition: transform .08s ease, background .15s ease;
+    }
+
+    button:hover { background: #303b50; }
+    button:active { transform: scale(.98); }
+
+    .btn-accent { background: #1d6b41; }
+    .btn-accent:hover { background: #24834f; }
+    .btn-danger { background: #803030; }
+    .btn-danger:hover { background: #9a3838; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .ping-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .ping-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #11161e;
+    }
+
+    .ping-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .ping-card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    .mini-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    /* Styles pour le nouveau menu d'ajout */
+    .form-hidden {
+      display: none !important;
+    }
+    
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #map {
+      width: 100%;
+      height: 100vh;
+      background: #0b0d10;
+    }
+
+    .custom-pin {
+      width: 24px;
+      height: 24px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,.55);
+    }
+
+    .custom-pin span {
+      display: block;
+      width: 8px;
+      height: 8px;
+      margin: 6px auto;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .popup-title {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .popup-desc {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .leaflet-popup-content button {
+      margin-top: 6px;
+      color: white;
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    @media (max-width: 800px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      aside { border-right: 0; border-bottom: 1px solid var(--border); max-height: 400px; }
+      #map { height: calc(100vh - 400px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <h1>Carte interactive</h1>
+      <div class="hint" id="mainHint">
+        Clique sur la carte pour ajouter un ping à un endroit précis.
+      </div>
+
+      <div id="pingFormSection" class="section form-hidden">
+        <h3 id="formTitle" style="margin-top: 0; margin-bottom: 12px; font-size: 15px; color: var(--accent);">Nouveau Ping</h3>
+        <input type="hidden" id="pingId">
+        <input type="hidden" id="pingLat">
+        <input type="hidden" id="pingLng">
+        
+        <div style="margin-bottom: 10px;">
+          <label for="pingName">Nom du repère *</label>
+          <input type="text" id="pingName" placeholder="Ex: Planque, Easter Egg..." required />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <label for="pingDesc">Description</label>
+          <textarea id="pingDesc" placeholder="Informations complémentaires..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <label for="pingColor">Couleur du marqueur</label>
+          <input type="color" id="pingColor" value="#ff3333" />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-accent" id="savePingBtn">Enregistrer</button>
+          <button id="cancelPingBtn" style="background: #303846;">Annuler</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <button class="btn-accent" id="exportBtn">Exporter les pings JSON</button>
+        <div class="row">
+          <button id="importBtn">Importer JSON</button>
+          <button class="btn-danger" id="clearBtn">Tout effacer</button>
+        </div>
+        <input id="jsonFile" type="file" accept="application/json" style="display:none" />
+      </div>
+
+      <div class="section">
+        <label>Pings enregistrés</label>
+        <div id="pingList" class="ping-list"></div>
+      </div>
+    </aside>
+
+    <main>
+      <div id="map"></div>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "gta-v-map-pings-v1";
+    const DEFAULT_MAP_URL = "map.jpg"; 
+
+    let pings = loadPings();
+    let markers = new Map();
+    let imageOverlay = null;
+    let temporaryMarker = null; // Marqueur visuel pendant l'édition
+
+    const mapWidth = 4096;
+    const mapHeight = 4096;
+    const bounds = [[0, 0], [mapHeight, mapWidth]];
+
+    const map = L.map("map", {
+      crs: L.CRS.Simple,
+      minZoom: -3,
+      maxZoom: 6,
+      zoomControl: true,
+      attributionControl: false
+    });
+
+    map.fitBounds(bounds);
+    setMapImage(DEFAULT_MAP_URL);
+
+    renderAllPings();
+    renderPingList();
+
+    // Clic sur la carte : Ouvre le menu latéral de création
+    map.on("click", (event) => {
+      openPingForm({
+        id: "",
+        name: "",
+        description: "",
+        color: "#ff3333",
+        lat: event.latlng.lat,
+        lng: event.latlng.lng
+      }, false);
+    });
+
+    // Bouton Enregistrer le formulaire
+    document.getElementById("savePingBtn").addEventListener("click", () => {
+      const id = document.getElementById("pingId").value;
+      const name = document.getElementById("pingName").value.trim();
+      const description = document.getElementById("pingDesc").value.trim();
+      const color = document.getElementById("pingColor").value;
+      const lat = parseFloat(document.getElementById("pingLat").value);
+      const lng = parseFloat(document.getElementById("pingLng").value);
+
+      if (!name) {
+        alert("Le nom du repère est obligatoire.");
+        return;
+      }
+
+      if (id) {
+        // Mode modification
+        const ping = pings.find(p => p.id === id);
+        if (ping) {
+          ping.name = name;
+          ping.description = description;
+          ping.color = color;
+        }
+      } else {
+        // Mode création
+        const newPing = {
+          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+          name,
+          description,
+          color,
+          lat,
+          lng,
+          createdAt: new Date().toISOString()
+        };
+        pings.push(newPing);
+      }
+
+      savePings();
+      removeTemporaryMarker();
+      closePingForm();
+      renderAllPings();
+      renderPingList();
+    });
+
+    // Bouton Annuler le formulaire
+    document.getElementById("cancelPingBtn").addEventListener("click", () => {
+      removeTemporaryMarker();
+      closePingForm();
+    });
+
+    // Ouvrir le formulaire (Création ou Édition)
+    function openPingForm(ping, isEditMode = false) {
+      document.getElementById("pingFormSection").classList.remove("form-hidden");
+      document.getElementById("mainHint").classList.add("form-hidden");
+      
+      document.getElementById("formTitle").innerText = isEditMode ? "Modifier le Ping" : "Nouveau Ping";
+      document.getElementById("formTitle").style.color = isEditMode ? "#e1a041" : "var(--accent)";
+      
+      document.getElementById("pingId").value = ping.id;
+      document.getElementById("pingName").value = ping.name;
+      document.getElementById("pingDesc").value = ping.description;
+      document.getElementById("pingColor").value = ping.color;
+      document.getElementById("pingLat").value = ping.lat;
+      document.getElementById("pingLng").value = ping.lng;
+
+      removeTemporaryMarker();
+
+      // En mode création, on pose un repère temporaire clignotant visuel sur la carte
+      if (!isEditMode) {
+        temporaryMarker = L.marker([ping.lat, ping.lng], {
+          icon: createPinIcon(ping.color),
+          opacity: 0.7
+        }).addTo(map);
+        map.panTo([ping.lat, ping.lng]);
+      }
+      
+      // Focus automatique sur le champ du nom
+      document.getElementById("pingName").focus();
+      
+      // Défilement de la barre latérale vers le haut pour voir le formulaire
+      document.querySelector("aside").scrollTop = 0;
+    }
+
+    function closePingForm() {
+      document.getElementById("pingFormSection").classList.add("form-hidden");
+      document.getElementById("mainHint").classList.remove("form-hidden");
+    }
+
+    function removeTemporaryMarker() {
+      if (temporaryMarker) {
+        temporaryMarker.remove();
+        temporaryMarker = null;
+      }
+    }
+
+    // Changement dynamique de la couleur du marqueur témoin en temps réel
+    document.getElementById("pingColor").addEventListener("input", (e) => {
+      if (temporaryMarker) {
+        temporaryMarker.setIcon(createPinIcon(e.target.value));
+      }
+    });
+
+    // --- Reste du moteur applicatif d'origine ---
+
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const data = JSON.stringify(pings, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pings-carte-gta-v.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      document.getElementById("jsonFile").click();
+    });
+
+    document.getElementById("jsonFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const imported = JSON.parse(text);
+        if (!Array.isArray(imported)) throw new Error("Format invalide");
+        pings = imported.filter(isValidPing);
+        savePings();
+        renderAllPings();
+        renderPingList();
+      } catch (error) {
+        alert("Impossible d'importer ce fichier JSON.");
+      }
+      event.target.value = "";
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if (!confirm("Supprimer tous les pings ?")) return;
+      closePingForm();
+      removeTemporaryMarker();
+      pings = [];
+      savePings();
+      renderAllPings();
+      renderPingList();
+    });
+
+    function setMapImage(url) {
+      if (imageOverlay) imageOverlay.remove();
+      imageOverlay = L.imageOverlay(url, bounds).addTo(map);
+      imageOverlay.bringToBack();
+    }
+
+    function addMarker(ping) {
+      const marker = L.marker([ping.lat, ping.lng], {
+        icon: createPinIcon(ping.color)
+      }).addTo(map);
+
+      marker.bindPopup(createPopupHtml(ping));
+      markers.set(ping.id, marker);
+    }
+
+    function createPinIcon(color) {
+      return L.divIcon({
+        className: "",
+        html: `<div class="custom-pin" style="background:${escapeHtml(color)}"><span></span></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 24],
+        popupAnchor: [0, -20]
+      });
+    }
+
+    function createPopupHtml(ping) {
+      return `
+        <div>
+          <div class="popup-title">${escapeHtml(ping.name)}</div>
+          <div class="popup-desc">${escapeHtml(ping.description || "Aucune description")}</div>
+          <button onclick="triggerEdit('${ping.id}')">Modifier</button>
+          <button class="btn-danger" onclick="deletePing('${ping.id}')">Supprimer</button>
+        </div>
+      `;
+    }
+
+    function renderAllPings() {
+      markers.forEach(marker => marker.remove());
+      markers.clear();
+      pings.forEach(addMarker);
+    }
+
+    function renderPingList() {
+      const list = document.getElementById("pingList");
+      list.innerHTML = "";
+
+      if (pings.length === 0) {
+        list.innerHTML = `<div class="status">Aucun ping pour le moment.</div>`;
+        return;
+      }
+
+      pings.forEach(ping => {
+        const card = document.createElement("div");
+        card.className = "ping-card";
+        card.innerHTML = `
+          <strong><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${escapeHtml(ping.color)}; margin-right:6px;"></span>${escapeHtml(ping.name)}</strong>
+          <p>${escapeHtml(ping.description || "Aucune description")}</p>
+          <div class="mini-buttons">
+            <button data-action="go">Voir</button>
+            <button data-action="edit">Modifier</button>
+          </div>
+        `;
+
+        card.querySelector('[data-action="go"]').addEventListener("click", () => {
+          map.setView([ping.lat, ping.lng], Math.max(map.getZoom(), 0));
+          markers.get(ping.id)?.openPopup();
+        });
+
+        card.querySelector('[data-action="edit"]').addEventListener("click", () => triggerEdit(ping.id));
+        list.appendChild(card);
+      });
+    }
+
+    // Passerelles globales reliées au nouveau menu
+    window.triggerEdit = function(id) {
+      const ping = pings.find(p => p.id === id);
+      if (!ping) return;
+      openPingForm(ping, true);
+    };
+
+    window.deletePing = function(id) {
+      if (!confirm("Supprimer ce ping ?")) return;
+      const currentFormId = document.getElementById("pingId").value;
+      if (currentFormId === id) {
+        closePingForm();
+        removeTemporaryMarker();
+      }
+      pings = pings.filter(p => p.id !== id);
+      savePings();
+      renderAllPings();
+      renderPingList();
+    };
+
+    function loadPings() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function savePings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(pings));
+    }
+
+    document.getElementById("map").style.cursor = "crosshair";
+
+    function isValidPing(ping) {
+      return ping && typeof ping.name === "string" && Number.isFinite(ping.lat) && Number.isFinite(ping.lng);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>
